@@ -88,17 +88,33 @@
     })();
 
     document.getElementById("contact-form").addEventListener("submit", function(e){
-      e.preventDefault();
+  e.preventDefault();
 
-      emailjs.sendForm("service_012", "template_baqs6tm", this)
-        .then(() => {
-          alert("✅ Your message has been sent successfully!");
-          this.reset();
-        }, (error) => {
-          alert("❌ Oops! Something went wrong. Please try again.");
-          console.error("EmailJS Error:", error);
-        });
+  const formData = {
+    name: document.getElementById("name").value,
+    email: document.getElementById("email").value,
+    phone: document.getElementById("phone").value,
+    eventType: document.getElementById("eventType").value,
+    message: document.getElementById("message").value
+  };
+
+  // Save to database
+  fetch("http://localhost:5000/api/bookings", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(formData)
+  }).catch(err => console.error("Booking save failed:", err));
+
+  // Send email notification (existing EmailJS)
+  emailjs.sendForm("service_012", "template_baqs6tm", this)
+    .then(() => {
+      alert("✅ Your message has been sent successfully!");
+      this.reset();
+    }, (error) => {
+      alert("❌ Oops! Something went wrong. Please try again.");
+      console.error("EmailJS Error:", error);
     });
+});
   </script>
 </body>
 </html>
